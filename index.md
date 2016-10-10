@@ -1,0 +1,72 @@
+---
+title       : A Text Prediction Application
+subtitle    : A Simple App for Predicting the Text as it is entered
+author      : Wayne Morris
+job         : Software Engineer/Data Scientist
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slideslis
+---
+
+## Introduction
+
+This app is a text prediction app that upon entry of a text it predicts which word will come. The prediction is done on the basis of suggestion and therefore a list of words will present itself as the text is entered. 
+
+
+--- .class #id 
+
+## Methodology
+The approach taken to make this prediction possible was done using the n-grams word analysis. In n-grams analysis, the text are split into words and are normalized by putting the text in lower case and removing all none alphabetic characters. To create the n-grams analysis, a 5% sample of text were taken from the blog.txt, news.txt and twitter.txt and combined. The combined text from these 3 sources were analyzed into 2-grams, 3-grams and 4-grams. Those words or n-grams that were considered insignificant such as occurring only once were removed.
+
+Make sure you have all the required libraries to run this app. The app uses the following libraries:
+      <ul>
+        <li>Shiny</li>
+        <li>tau</li>
+        <li>tm</li>
+        <li>NLP</li>
+      </ul>
+
+--- .class #id 
+
+## The R Code for App
+The simple version of the R code is shown below. The function below takes in the words and process the text based on the n-gram model to be used. The full code can be viewed on my <a href="https://github.com/wmorris75/text_prediction">github</a> page.
+
+---
+
+## The Code for App(cont)
+
+```r
+get_n_grams<-function(content.words, n){
+  # the NLP function "ngrams" returns a list of n pairs of words.
+  content.bigrams = vapply(ngrams(content.words, n), paste, "", collapse = " ")
+  
+  # we count them using xtabs,
+  # and put the result into a data frame.
+  content.bigram.counts = as.data.frame(xtabs(~content.bigrams))
+  
+  filename <- paste(as.character(n), "_grams.txt", sep='')
+  content.bigram.counts<-content.bigram.counts[order(content.bigram.counts$Freq, decreasing = TRUE),]
+  write.table(content.bigram.counts, filename)
+  return (content.bigram.counts)
+}
+```
+
+---
+
+## How to use and App Limitations
+
+The usage of the app is simple. Upon input of a text, it outputs a prediction of the most likely words that come next. When a suggestion is clicked, it adds to the input field. When this happens, the user needs to press the space bar or continue typing for the next prediction of words. Otherwise, the app will remain in its present state. This is a limitation and future work will bring the app into a new state of word suggestions as the user clicks on the suggestion output from the entered text.
+
+
+
+ 
+
+
+
+
+
+
+
